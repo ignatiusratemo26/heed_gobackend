@@ -6,12 +6,21 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+}
 
 type TranscriptionRequest struct {
 	Title string `json:"title"`
@@ -24,8 +33,9 @@ func StartRecordingHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func TranscribeAudio(filePath string) (string, error) {
-	apiURL := " "
-	apiKey := " "
+
+	apiURL := "https://eastus.api.cognitive.microsoft.com/"
+	apiKey := os.Getenv("AZURE_API_KEY")
 
 	file, err := os.Open(filePath)
 	if err != nil {
